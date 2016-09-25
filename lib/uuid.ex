@@ -418,8 +418,13 @@ defmodule UUID do
 
   # Get local IEEE 802 (MAC) address, or a random node id if it can't be found.
   defp uuid1_node() do
-    {:ok, ifs0} = :inet.getifaddrs()
-    uuid1_node(ifs0)
+    case :inet.getifaddrs() do
+        {:ok, ifs0} ->
+          ifs0
+        {:error, _} ->
+          0 # Dummy value.
+    end
+    |> uuid1_node()
   end
 
   defp uuid1_node([{_if_name, if_config} | rest]) do
